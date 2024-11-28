@@ -1,11 +1,17 @@
 import { StyleSheet, Text, View, Image, Pressable, TouchableOpacity, FlatList } from 'react-native'
 import React from 'react'
+
 import { Link } from 'expo-router'
 import { FontAwesome } from '@expo/vector-icons';
-import { CATEGORIES } from '../../assets/categories';
 
-export const ListHeader = () => (
-    <View style={[styles.headerContainer]}>
+import { CATEGORIES } from '../../assets/categories';
+import { useCartStore } from '../store/cart-store';
+
+export const ListHeader = () => {
+
+    const { getItemCount } = useCartStore();
+
+    return (<View style={[styles.headerContainer]}>
         <View style={styles.headerTop}>
             <View style={styles.headerLeft}>
                 <View style={styles.avatarContainer}>
@@ -27,7 +33,7 @@ export const ListHeader = () => (
                                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
 
                                 <View style={styles.badgeContainer}>
-                                    <Text style={styles.badgeText}>{1}</Text>
+                                    <Text style={styles.badgeText}>{getItemCount()}</Text>
                                 </View>
                             </View>
                         )}
@@ -69,7 +75,8 @@ export const ListHeader = () => (
             />
         </View>
     </View>
-)
+    )
+}
 
 const styles = StyleSheet.create({
     headerContainer: {

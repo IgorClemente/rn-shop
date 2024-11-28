@@ -21,7 +21,7 @@ type CartState = {
 
 const initialCartItems: CartItemType[] = [];
 
-export const userCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set, get) => ({
     items: initialCartItems,
     addItem: (item: CartItemType) => {
         const existingItem = get().items.find(i => i.id === item.id);
