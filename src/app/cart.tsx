@@ -1,20 +1,51 @@
 import { View, Text, StyleSheet, Alert, StatusBar, Platform, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useCartStore } from '../store/cart-store';
+import { createOrder, createOrderItem } from '../api/api';
 
 const Cart = () => {
 
-    const { items, removeItem, incrementItem, decrementItem, getTotalPrice } = useCartStore();
+    const { items, removeItem, incrementItem, decrementItem, getTotalPrice, resetCart } = useCartStore();
 
-    const handleCheckout = () => {
-        Alert.alert('Proceeding to Checkout', `Total amount: $${getTotalPrice()}`);
+    const { mutateAsync: createSupabaseOrder } = createOrder();
+    const { mutateAsync: createSupabaseOrderItem } = createOrderItem();
+
+    const handleCheckout = async () => {
+
+        const totalPrice = parseFloat(getTotalPrice());
+
+        try {
+            await createSupabaseOrder(
+                { totalPrice },
+                {
+                    onSuccess: data => {
+                        createSupabaseOrderItem(
+                            items.map(item => ({
+                                orderId: data.id,
+                                productId: item.id,
+                                quantity: item.quantity
+                            })),
+                            {
+                                onSuccess: () => {
+                                    alert('Order created successfully');
+                                    resetCart();
+                                }
+                            }
+                        )
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while creating the order');
+        }
     };
 
     type CartItemType = {
         id: number;
         title: string;
-        image: any;
+        heroImage: string;
         price: number;
         quantity: number;
+        maxQuantity: number;
     };
 
     type CartItemProps = {
@@ -27,7 +58,7 @@ const Cart = () => {
     const CartItem = ({ item, onRemove, onIncrement, onDecrement }: CartItemProps) => {
         return (
             <View style={styles.cartItem}>
-                <Image source={item.image} style={styles.itemImage} />
+                <Image source={{ uri: item.heroImage }} style={styles.itemImage} />
                 <View style={styles.itemDetails}>
                     <Text style={styles.itemTitle}>{item.title}</Text>
                     <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>

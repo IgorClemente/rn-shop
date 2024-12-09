@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator } from 'react-native'
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router'
 
-import { CATEGORIES } from '../../../assets/categories';
-import { PRODUCTS } from '../../../assets/products';
 import { ProductListItem } from '../../components/product-list-item';
 import { getCategoryAndProducts } from '../../api/api';
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native'
 
-import { PRODUCTS } from '../../../assets/products';
 import { ProductListItem } from '../../components/product-list-item';
 import { ListHeader } from '../../components/list-header';
 import { getProductsAndCategories } from '../../api/api';
@@ -13,8 +12,6 @@ const Home = () => {
     if (isLoading) return <ActivityIndicator />;
 
     if (error || !data) return <Text>Error ${error?.message || "And error occurred "}</Text>
-
-    console.log(data);
 
     return (
         <View>
