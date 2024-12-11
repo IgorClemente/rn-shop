@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Alert, StatusBar, Platform, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useCartStore } from '../store/cart-store';
 import { createOrder, createOrderItem } from '../api/api';
+import { openStripeCheckout, setupStripePaymentSheet } from '../lib/stripe';
 
 const Cart = () => {
 
@@ -14,6 +15,15 @@ const Cart = () => {
         const totalPrice = parseFloat(getTotalPrice());
 
         try {
+            await setupStripePaymentSheet(Math.floor(totalPrice * 100));
+
+            const result = await openStripeCheckout();
+
+            if (!result) {
+                Alert.alert('An error occurred while processing the payment');
+                return;
+            }
+
             await createSupabaseOrder(
                 { totalPrice },
                 {
